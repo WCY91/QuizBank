@@ -63,8 +63,7 @@ class PaintActivity : AppCompatActivity() {
     var rotateFlag : Int = 0
     var filterFlag : Boolean = false
     var shareFlag : Int = 0
-    lateinit var colorTag : String
-
+    var colorTag : String = "#d62828" //預設紅色
     var penFlag: Int = 0 // 0 : brush 1: highlighter
     private var mImageButtonCurrentPaint: ImageButton?=null
     var idImage = System.currentTimeMillis()/1000
@@ -92,7 +91,6 @@ class PaintActivity : AppCompatActivity() {
             Log.e("color",color!!)
             drawingView?.setColor("#"+color!!)
             colorTag = "#"+color!!
-
             val file = File(saveTempPath!!)
             if (file.exists()) {
                 val deleted = file.delete()
@@ -168,7 +166,6 @@ class PaintActivity : AppCompatActivity() {
             ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
             drawingView?.setColor(colorTag)
         }
-
 
         ib_highlighter.setOnClickListener{
             penFlag = 1
@@ -269,7 +266,9 @@ class PaintActivity : AppCompatActivity() {
             intent.putExtra("bitmap_image", cachePath.absolutePath)
 
             colorForResult.launch(intent)
-
+            mImageButtonCurrentPaint?.setImageDrawable(
+                ContextCompat.getDrawable(this,R.drawable.pallet_normal)
+            )
         }
 
         val ibPlatte : ImageButton = findViewById(R.id.ib_Palette)
@@ -292,7 +291,9 @@ class PaintActivity : AppCompatActivity() {
                 .attachBrightnessSlideBar(true)
                 .setBottomSpace(12)
                 .show()
-
+            mImageButtonCurrentPaint?.setImageDrawable(
+                ContextCompat.getDrawable(this,R.drawable.pallet_normal)
+            )
         }
 
         val ibFilter : ImageButton = findViewById(R.id.ib_filter)
@@ -357,7 +358,11 @@ class PaintActivity : AppCompatActivity() {
         if(view!== mImageButtonCurrentPaint){
             val imageButton = view as ImageButton
             colorTag = imageButton.tag.toString()
-            drawingView?.setColor(colorTag)
+            if(penFlag == 1){
+                drawingView?.setHighlighterColor(colorTag)
+            }else{
+                drawingView?.setColor(colorTag)
+            }
             imageButton!!.setImageDrawable(
                 ContextCompat.getDrawable(this,R.drawable.pallet_pressed)
             )
