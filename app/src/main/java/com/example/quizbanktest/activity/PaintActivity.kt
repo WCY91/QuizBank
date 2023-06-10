@@ -62,6 +62,10 @@ class PaintActivity : AppCompatActivity() {
     val rotateArray = arrayOf(0, 270, 180, 90)
     var rotateFlag : Int = 0
     var filterFlag : Boolean = false
+    var shareFlag : Int = 0
+    lateinit var colorTag : String
+
+    var penFlag: Int = 0 // 0 : brush 1: highlighter
     private var mImageButtonCurrentPaint: ImageButton?=null
     var idImage = System.currentTimeMillis()/1000
     val filters = listOf(
@@ -87,6 +91,8 @@ class PaintActivity : AppCompatActivity() {
             val color = intent?.getStringExtra("colorHexCode")
             Log.e("color",color!!)
             drawingView?.setColor("#"+color!!)
+            colorTag = "#"+color!!
+
             val file = File(saveTempPath!!)
             if (file.exists()) {
                 val deleted = file.delete()
@@ -153,9 +159,38 @@ class PaintActivity : AppCompatActivity() {
         )
 
         drawingView?.setSizeForBrush(20.toFloat())
+        val ib_highlighter : ImageButton = findViewById(R.id.ib_highlighter)
         val ib_brush : ImageButton = findViewById(R.id.ib_brush)
         ib_brush.setOnClickListener{
             showBrushSizeChooserDialog()
+            penFlag = 0
+            ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
+            ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+            drawingView?.setColor(colorTag)
+        }
+
+
+        ib_highlighter.setOnClickListener{
+            penFlag = 1
+            ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_24))
+            ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_press))
+            ColorPickerDialog.Builder(this)
+                .setTitle("ColorPicker Dialog")
+                .setPreferenceName("MyColorPickerDialog")
+                .setPositiveButton("choose",
+                    ColorEnvelopeListener { envelope, fromUser ->
+                        var color = "#" + envelope.getHexCode()
+                        drawingView?.setHighlighterColor(color!!)
+                        Toast.makeText(this@PaintActivity,"成功選擇顏色", Toast.LENGTH_SHORT  ).show()
+                    })
+                .setNegativeButton("cancel",
+                    DialogInterface.OnClickListener { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    })
+                .attachAlphaSlideBar(true)
+                .attachBrightnessSlideBar(true)
+                .setBottomSpace(12)
+                .show()
         }
 
         val ib_rotate : ImageButton = findViewById(R.id.ib_rotateImage)
@@ -204,7 +239,19 @@ class PaintActivity : AppCompatActivity() {
                     saveBitmapFileForPicturesDir(getBitmapFromView(flDrawingView))
                 }
             }
+        }
 
+        val ib_share : ImageButton = findViewById(R.id.ib_share)
+        ib_share.setOnClickListener{
+            shareFlag = 1
+            Log.e("shareFlagIb",shareFlag.toString())
+                lifecycleScope.launch{
+                    val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
+                    //Save the image to the device
+                    saveBitmapFile(getBitmapFromView(flDrawingView))
+                    shareFlag = 0
+                    Log.e("shareFlagIbFin",shareFlag.toString())
+                }
         }
 
         val ib_colorPicker : ImageButton = findViewById(R.id.ib_colorPicker)
@@ -234,6 +281,7 @@ class PaintActivity : AppCompatActivity() {
                     ColorEnvelopeListener { envelope, fromUser ->
                         var color = "#" + envelope.getHexCode()
                         drawingView?.setColor(color!!)
+                        colorTag = color!!
                         Toast.makeText(this@PaintActivity,"成功選擇顏色", Toast.LENGTH_SHORT  ).show()
                     })
                 .setNegativeButton("cancel",
@@ -244,6 +292,7 @@ class PaintActivity : AppCompatActivity() {
                 .attachBrightnessSlideBar(true)
                 .setBottomSpace(12)
                 .show()
+
         }
 
         val ibFilter : ImageButton = findViewById(R.id.ib_filter)
@@ -307,7 +356,7 @@ class PaintActivity : AppCompatActivity() {
     fun paintClicked(view:View){
         if(view!== mImageButtonCurrentPaint){
             val imageButton = view as ImageButton
-            val colorTag = imageButton.tag.toString()
+            colorTag = imageButton.tag.toString()
             drawingView?.setColor(colorTag)
             imageButton!!.setImageDrawable(
                 ContextCompat.getDrawable(this,R.drawable.pallet_pressed)
@@ -346,7 +395,7 @@ class PaintActivity : AppCompatActivity() {
         if(mBitmap!=null){
             var base64URL = encodeImage(mBitmap)
             if (base64URL != null) {
-                Log.e("base64URL:  ",base64URL)
+//                Log.e("base64URL:  ",base64URL)
             }
         }
         withContext(Dispatchers.IO){
@@ -369,7 +418,13 @@ class PaintActivity : AppCompatActivity() {
                                 Toast.LENGTH_SHORT
                             ).show()
                             try {
-                                shareImage(result)
+                                Log.e("shareFlag",shareFlag.toString())
+                                if(shareFlag==1){
+                                    Log.e("in share",shareFlag.toString())
+                                    shareImage(result)
+                                    val file = File(result)
+                                    file.delete()
+                                }
                             }catch (e : java.lang.Exception){
 
                             }
@@ -389,6 +444,7 @@ class PaintActivity : AppCompatActivity() {
                 }
             }
         }
+        if(shareFlag == 1) return ""
         return result
     }
 
@@ -397,9 +453,9 @@ class PaintActivity : AppCompatActivity() {
         var result = ""
         if (mBitmap != null) {
             var base64URL = encodeImage(mBitmap)
-            if (base64URL != null) {
-                Log.e("base64URL:  ", base64URL)
-            }
+//            if (base64URL != null) {
+//                Log.e("base64URL:  ", base64URL)
+//            }
         }
         withContext(Dispatchers.IO) {
             if (mBitmap != null) {

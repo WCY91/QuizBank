@@ -195,7 +195,15 @@
                 android:src="@drawable/baseline_brush_24"
                 android:background="@color/colorRipple"
                 android:scaleType="fitXY"
-
+                />
+            <ImageButton
+                android:id="@+id/ib_highlighter"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/baseline_border_color_24"
+                android:background="@color/colorRipple"
+                android:scaleType="fitXY"
                 />
             <ImageButton
                 android:id="@+id/ib_colorPicker"
@@ -262,7 +270,15 @@
                 android:src="@drawable/baseline_save_24"
                 android:background="@color/colorRipple"
                 android:scaleType="fitXY"
-
+                />
+            <ImageButton
+                android:id="@+id/ib_share"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/baseline_share_24"
+                android:background="@color/colorRipple"
+                android:scaleType="fitXY"
                 />
         </LinearLayout>
 

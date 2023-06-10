@@ -78,6 +78,12 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
         color = Color.parseColor(newColor)
         mDrawPaint!!.color = color
     }
+    fun setHighlighterColor(newColor : String){
+        Log.e("setColor",newColor)
+        color = Color.parseColor(newColor)
+        color = Color.argb(50, Color.red(color), Color.green(color), Color.blue(color)) // Set alpha to 50%
+        mDrawPaint!!.color = color
+    }
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val touchX = event?.x
         val touchY = event?.y
