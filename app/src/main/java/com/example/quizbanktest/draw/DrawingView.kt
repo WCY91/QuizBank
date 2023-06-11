@@ -9,18 +9,17 @@ import android.view.MotionEvent
 import android.view.View
 
 class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
-
+    private var mEraserFlag : Int = 0
     private var mDrawPath : CustomPath? = null
     private var mCanvasBitmap:Bitmap?=null
     private var mDrawPaint: Paint? = null
     private var mCanvasPaint: Paint? = null
 
     private var mBrushSize:Float = 0.toFloat()
-    private var color = Color.WHITE
+    private var color = Color.parseColor("#d62828")
     private var canvas: Canvas?=null
     private val mPaths = ArrayList<CustomPath>()
     private val mUndoPaths = ArrayList<CustomPath>()
-    private val mRedoPaths = ArrayList<CustomPath>()
 
     init{
         setUpDrawing()
@@ -36,6 +35,51 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
             mPaths.add(mUndoPaths.removeAt(mUndoPaths.size-1))
             invalidate()
         }
+    }
+    fun setEraser(){
+        mEraserFlag = 1
+    }
+    fun cancelEraser(){
+        mEraserFlag = 0
+    }
+    private fun removePathWithEvent(event: MotionEvent): Boolean {
+        when(event.action) {
+            MotionEvent.ACTION_DOWN,
+            MotionEvent.ACTION_MOVE,
+            MotionEvent.ACTION_UP -> {
+                for (path in mPaths.reversed()) {
+                    if (path.doIntersect(event.x, event.y, 5f)) {
+                        mPaths.remove(path)
+                    }
+                }
+            }
+        }
+        invalidate()
+        return true
+    }
+    fun Path.doIntersect(x: Float, y: Float, width: Float): Boolean {
+        val measure = PathMeasure(this, false)
+        val length = measure.length
+        val delta = width / 2f
+        val position = floatArrayOf(0f, 0f)
+        val bounds = RectF()
+        var distance = 0f
+        var intersects = false
+        while (distance <= length) {
+            measure.getPosTan(distance, position, null)
+            bounds.set(
+                position[0] - delta,
+                position[1] - delta,
+                position[0] + delta,
+                position[1] + delta
+            )
+            if (bounds.contains(x, y)) {
+                intersects = true
+                break
+            }
+            distance += delta / 2f
+        }
+        return intersects
     }
     private fun setUpDrawing(){//設置一開始的初始化
         mDrawPaint = Paint()
@@ -90,30 +134,34 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val touchX = event?.x
         val touchY = event?.y
-        when(event?.action){
-            MotionEvent.ACTION_DOWN->{//按下的瞬間 紀錄按下的位置並將初始位置移到那個地方
-                mDrawPath!!.color =color
-                mDrawPath!!.brushThickness = mBrushSize
-                mDrawPath!!.reset()
-                if (touchX != null) {
-                    if (touchY != null) {
-                        mDrawPath!!.moveTo(touchX,touchY)//move to不會畫在上面只會移動位置
+        if(mEraserFlag == 1) {
+            removePathWithEvent(event!!)
+        }else{
+            when(event?.action){
+                MotionEvent.ACTION_DOWN->{//按下的瞬間 紀錄按下的位置並將初始位置移到那個地方
+                    mDrawPath!!.color =color
+                    mDrawPath!!.brushThickness = mBrushSize
+                    mDrawPath!!.reset()
+                    if (touchX != null) {
+                        if (touchY != null) {
+                            mDrawPath!!.moveTo(touchX,touchY)//move to不會畫在上面只會移動位置
+                        }
                     }
                 }
-            }
-            MotionEvent.ACTION_MOVE ->{
-                if (touchX != null) {
-                    if (touchY != null) {
-                        mDrawPath!!.lineTo(touchX,touchY)//會直接畫上去從你move to的地方
+                MotionEvent.ACTION_MOVE ->{
+                    if (touchX != null) {
+                        if (touchY != null) {
+                            mDrawPath!!.lineTo(touchX,touchY)//會直接畫上去從你move to的地方
+                        }
                     }
                 }
-            }
-            MotionEvent.ACTION_UP ->{
-                mPaths.add(mDrawPath!!)//記錄你畫的
-                mDrawPath = CustomPath(color,mBrushSize)
-            }
+                MotionEvent.ACTION_UP ->{
+                    mPaths.add(mDrawPath!!)//記錄你畫的
+                    mDrawPath = CustomPath(color,mBrushSize)
+                }
 
-            else ->return false
+                else ->return false
+            }
         }
         invalidate()//更新會呼叫 ondraw
 

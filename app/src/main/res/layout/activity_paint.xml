@@ -54,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fl_drawing_view_container"
-        >
+        tools:ignore="NotSibling">
         <ImageButton
             android:layout_width="25dp"
             android:layout_height="25dp"
@@ -213,6 +213,16 @@
                 android:layout_height="40dp"
                 android:layout_margin="10dp"
                 android:src="@drawable/baseline_border_color_24"
+                android:background="@color/colorRipple"
+                android:scaleType="fitXY"
+                />
+
+            <ImageButton
+                android:id="@+id/ib_eraser"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_margin="10dp"
+                android:src="@drawable/ib_eraser"
                 android:background="@color/colorRipple"
                 android:scaleType="fitXY"
                 />

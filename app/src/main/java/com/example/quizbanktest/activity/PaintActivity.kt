@@ -181,23 +181,47 @@ class PaintActivity : AppCompatActivity() {
         drawingView?.setSizeForBrush(20.toFloat())
         val ib_highlighter : ImageButton = findViewById(R.id.ib_highlighter)
         val ib_brush : ImageButton = findViewById(R.id.ib_brush)
+        val ib_eraser : ImageButton = findViewById(R.id.ib_eraser)
+        ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press)) //預設為筆
 
         ib_brush.setOnClickListener{
-
+            drawingView?.cancelEraser()
             showBrushSizeChooserDialog()
             penFlag = 0
             ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
             ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
-
+            ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser))
             drawingView?.setColor(colorTag)
         }
 
-        ib_highlighter.setOnClickListener{
+        ib_eraser.setOnClickListener{
+            ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_24))
+            ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+            ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser_press))
 
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("使用此橡皮擦並不能復原，是否使用？")
+                .setTitle("超級橡皮擦\uD83E\uDE84")
+                .setPositiveButton("OK") { dialog, which ->
+                    drawingView?.setEraser()
+                }
+                .setNeutralButton("Cancel") { dialog, which ->
+                    penFlag = 0
+                    ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
+                    ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+                    ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser))
+                    drawingView?.setColor(colorTag)
+                    drawingView?.cancelEraser()
+                }
+                .show()
+        }
+
+        ib_highlighter.setOnClickListener{
+            drawingView?.cancelEraser()
             penFlag = 1
             ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_24))
             ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_press))
-
+            ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser))
 
             ColorPickerDialog.Builder(this)
                 .setTitle("ColorPicker Dialog")
@@ -207,6 +231,9 @@ class PaintActivity : AppCompatActivity() {
                         var color = "#" + envelope.getHexCode()
                         drawingView?.setHighlighterColor(color!!)
                         Toast.makeText(this@PaintActivity,"成功選擇顏色", Toast.LENGTH_SHORT  ).show()
+                        mImageButtonCurrentPaint?.setImageDrawable(
+                            ContextCompat.getDrawable(this,R.drawable.pallet_normal)
+                        )
                     })
                 .setNegativeButton("cancel",
                     DialogInterface.OnClickListener { dialogInterface, _ ->
@@ -576,5 +603,4 @@ class PaintActivity : AppCompatActivity() {
         }
 
     }
-
 }

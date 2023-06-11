@@ -8,7 +8,7 @@
         <item
             android:id="@+id/ocrWorkSpace"
             android:icon="@drawable/ib_text_editor"
-            android:title="textWorkSpace" />
+            android:title="Scanner Text WorkSpace" />
         <item
             android:id="@+id/imageEditor"
             android:icon="@drawable/ic_photo_edit"
