@@ -13,6 +13,8 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
@@ -22,6 +24,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,6 +40,7 @@ import com.example.quizbanktest.utils.Constants
 import com.example.quizbanktest.utils.ConstantsQuestionBank
 import com.example.quizbanktest.utils.ConstantsRecommend
 import com.example.quizbanktest.utils.ConstantsWrong
+import com.google.android.material.navigation.NavigationView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -54,7 +58,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val SAMPLE_CROPPED_IMG_NAME = "CroppedImage.jpg"
     private var cameraPhotoUri :Uri ?=null
@@ -135,17 +139,16 @@ class MainActivity : AppCompatActivity() {
         setupRecentRecyclerView(ConstantsQuestionBank.getQuestions())
         setupRecommendRecyclerView(ConstantsRecommend.getQuestions())
         setupWrongListRecyclerView(ConstantsWrong.getQuestions())
+        setupActionBar()
+
+        var nav_view : com.google.android.material.navigation.NavigationView = findViewById(R.id.nav_view)
+        nav_view.setNavigationItemSelectedListener(this)
 
         var bank : ImageButton = findViewById(R.id.bank)
         bank.setOnClickListener{
-            val intent = Intent(this,PaintActivity::class.java)
-            startActivity(intent)
+            //TODO
         }
-        //        var imageEditor: ImageButton = findViewById(R.id.imageEditor)
-//        imageEditor.setOnClickListener{
-//            val intent = Intent(this,PaintActivity::class.java)
-//            startActivity(intent)
-//        }
+
         var camera : ImageButton = findViewById(R.id.camera)
         camera?.setOnClickListener {
             val pictureDialog = AlertDialog.Builder(this)
@@ -383,4 +386,40 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
     }
+    private fun toggleDrawer() {
+        var drawer_layout :DrawerLayout = findViewById(R.id.drawer_layout)
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        } else {
+            drawer_layout.openDrawer(GravityCompat.START)
+        }
+    }
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.nav_my_profile -> {
+                Toast.makeText(this@MainActivity, "My Profile", Toast.LENGTH_SHORT).show()
+            }
+
+            R.id.nav_sign_out -> {
+               //TODO
+            }
+            R.id.imageEditor ->{
+                val intent = Intent(this,PaintActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        var drawer_layout :DrawerLayout = findViewById(R.id.drawer_layout)
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
+    private fun setupActionBar() {
+        var toolbar_main_activity : androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_home_detail)
+        setSupportActionBar(toolbar_main_activity)
+        toolbar_main_activity.setNavigationIcon(R.drawable.ic_action_navigation_menu)
+
+        toolbar_main_activity.setNavigationOnClickListener {
+            toggleDrawer()
+        }
+    }
+
 }
