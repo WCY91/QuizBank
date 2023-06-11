@@ -372,14 +372,6 @@ class PaintActivity : AppCompatActivity() {
             mImageButtonCurrentPaint = view
         }
     }
-
-    private fun encodeImage(bm: Bitmap): String? {
-        val baos = ByteArrayOutputStream()
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
-        val b = baos.toByteArray()
-        return Base64.encodeToString(b, Base64.DEFAULT)
-    }
-
     private fun getBitmapFromView(view: View): Bitmap {
         val returnedBitmap = Bitmap.createBitmap(view.width,view.height,Bitmap.Config.ARGB_8888)
         val canvas = Canvas(returnedBitmap)
@@ -397,12 +389,7 @@ class PaintActivity : AppCompatActivity() {
     private suspend fun saveBitmapFile(mBitmap: Bitmap?):String{
         Log.e("in sava","save")
         var result = ""
-        if(mBitmap!=null){
-            var base64URL = encodeImage(mBitmap)
-            if (base64URL != null) {
-//                Log.e("base64URL:  ",base64URL)
-            }
-        }
+
         withContext(Dispatchers.IO){
             if(mBitmap != null){
                 try{
@@ -456,12 +443,7 @@ class PaintActivity : AppCompatActivity() {
     private suspend fun saveBitmapFileForPicturesDir(mBitmap: Bitmap?): String {
         Log.e("in sava", "save")
         var result = ""
-        if (mBitmap != null) {
-            var base64URL = encodeImage(mBitmap)
-//            if (base64URL != null) {
-//                Log.e("base64URL:  ", base64URL)
-//            }
-        }
+
         withContext(Dispatchers.IO) {
             if (mBitmap != null) {
                 try {

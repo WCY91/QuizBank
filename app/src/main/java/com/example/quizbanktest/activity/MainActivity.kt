@@ -1,11 +1,14 @@
 package com.example.quizbanktest.activity
 import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.ContentValues
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
@@ -16,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.quizbanktest.adapters.RecentViewAdapter
 import com.example.quizbanktest.adapters.RecommendViewAdapter
@@ -34,6 +38,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.yalantis.ucrop.UCrop
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit.Callback
 import retrofit.GsonConverterFactory
 import retrofit.Response
@@ -94,11 +101,13 @@ class MainActivity : AppCompatActivity() {
         if(result.resultCode == RESULT_OK){
 
             val thumbnail: Bitmap? = BitmapFactory.decodeStream(getContentResolver().openInputStream(cameraPhotoUri!!))
+            lifecycleScope.launch{
+                saveBitmapFileForPicturesDir(thumbnail!!)
+            }
             var base64String = encodeImage(thumbnail!!)
             var size = estimateBase64SizeFromBase64String(base64String!!)
             Log.e("camera size",size.toString())
             val sourceUri = cameraPhotoUri!!  // The Uri of the image you want to crop
-            val destinationFileName = SAMPLE_CROPPED_IMG_NAME
             val destinationUri = Uri.fromFile(File(externalCacheDir?.absoluteFile.toString()+File.separator+"QuizBank_"+SAMPLE_CROPPED_IMG_NAME))
 
             val uCrop = UCrop.of(sourceUri, destinationUri)
@@ -192,8 +201,6 @@ class MainActivity : AppCompatActivity() {
                         uri1)
                     cameraPhotoUri = uri1
                     cameraLauncher.launch(intent)
-
-
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -301,7 +308,51 @@ class MainActivity : AppCompatActivity() {
         val placesAdapter = WrongViewAdapter(this, wrongList)
         binding?.recentWrongList?.adapter = placesAdapter
     }
+    private suspend fun saveBitmapFileForPicturesDir(mBitmap: Bitmap?): String {
+        Log.e("in sava", "save")
+        var result = ""
+        if (mBitmap != null) {
+            var base64URL = encodeImage(mBitmap)
+//            if (base64URL != null) {
+//                Log.e("base64URL:  ", base64URL)
+//            }
+        }
+        withContext(Dispatchers.IO) {
+            if (mBitmap != null) {
+                try {
+                    val fileName = "QuizBank_${idImage}.jpg"
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                        put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                        }
+                    }
 
+                    val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                    contentResolver.openOutputStream(uri!!).use { outputStream ->
+                        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                    }
+                    result = uri.toString()
+
+                    runOnUiThread {
+                        if (!result.isEmpty()) {
+                        } else {
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Something went wrong while saving the file.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+        }
+        return result
+    }
     private fun setupRecommendRecyclerView(recommendList: ArrayList<QuestionModel>) {
 
         binding?.recentRecommendList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
