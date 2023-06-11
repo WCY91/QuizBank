@@ -32,6 +32,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import com.example.quizbanktest.R
+import com.example.quizbanktest.databinding.ActivityPaintBinding
 import com.example.quizbanktest.draw.DrawingView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -66,6 +67,7 @@ class PaintActivity : AppCompatActivity() {
     var colorTag : String = "#d62828" //預設紅色
     var penFlag: Int = 0 // 0 : brush 1: highlighter
     private var mImageButtonCurrentPaint: ImageButton?=null
+
     var idImage = System.currentTimeMillis()/1000
     val filters = listOf(
         GPUImageGrayscaleFilter(),
@@ -135,7 +137,7 @@ class PaintActivity : AppCompatActivity() {
                 val imageBackground: ImageView = findViewById(R.id.iv_background)
                 imageBackground.setImageBitmap(selectedImageBitmap)
 
-//                binding?.cameraTest!!.setImageBitmap(selectedImageBitmap) Set the selected image from GALLERY to imageView.
+
             } catch (e: IOException) {
                 e.printStackTrace()
                 Toast.makeText(this@PaintActivity, "Failed!", Toast.LENGTH_SHORT).show()
@@ -146,6 +148,23 @@ class PaintActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_paint)
+
+        var toolBar : androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar_paint_detail)
+        setSupportActionBar(toolBar)
+        val actionBar = supportActionBar
+        if (actionBar != null) {
+            Log.e("in action bar","not null")
+            actionBar.setDisplayHomeAsUpEnabled(true)
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_black_color_back_24dp)
+            Log.e("nav","toolbar")
+        }
+
+        toolBar.setNavigationOnClickListener{
+            Log.e("nav","toolbar")
+            val intent = Intent(this,MainActivity::class.java)
+            startActivity(intent)
+        }
+
         drawingView = findViewById(R.id.drawing_view)
 
         Log.e("paint",R.id.ll_paint_colors.toString())
@@ -548,4 +567,5 @@ class PaintActivity : AppCompatActivity() {
         }
 
     }
+
 }

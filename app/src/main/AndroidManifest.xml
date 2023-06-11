@@ -34,7 +34,9 @@
             android:exported="false" />
         <activity
             android:name=".activity.PaintActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.MainActivity"
+            />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"

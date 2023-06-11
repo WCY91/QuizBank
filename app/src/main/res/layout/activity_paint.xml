@@ -5,6 +5,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_paint_detail"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        app:titleTextAppearance="@style/CustomToolbarStyle"
+        app:titleTextColor="@color/colorPrimaryDark"
+        app:title="Image Editor ⚙️"
+        android:theme="@style/ToolbarTheme"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <FrameLayout
         android:id="@+id/fl_drawing_view_container"
@@ -16,7 +27,7 @@
         app:layout_constraintBottom_toTopOf="@id/ll_paint_colors"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_paint_detail"
         >
         <ImageView
             android:id="@+id/iv_background"
