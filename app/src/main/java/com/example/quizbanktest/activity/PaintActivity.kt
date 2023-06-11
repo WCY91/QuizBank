@@ -70,18 +70,20 @@ class PaintActivity : AppCompatActivity() {
 
     var idImage = System.currentTimeMillis()/1000
     val filters = listOf(
+        GPUImageRGBFilter(),
         GPUImageGrayscaleFilter(),
         GPUImageSepiaToneFilter(),
         GPUImageContrastFilter(),
         GPUImageBrightnessFilter(),
         GPUImageExposureFilter(),
         GPUImageDilationFilter(),
-        GPUImageSharpenFilter(),
+        GPUImageCrosshatchFilter(),
         GPUImageMonochromeFilter(),
-        GPUImageRGBFilter(),
-        GPUImageLevelsFilter(),
+        GPUImageGaussianBlurFilter(),
         GPUImageHalftoneFilter(),
         GPUImageLaplacianFilter(),
+        GPUImageSketchFilter(),
+        GPUImageSmoothToonFilter()
     )
     private var originBackImageView : Bitmap ?=null
     private var drawingView: DrawingView?=null
@@ -136,6 +138,7 @@ class PaintActivity : AppCompatActivity() {
                     BitmapFactory.decodeStream(getContentResolver().openInputStream(contentURI!!))
                 val imageBackground: ImageView = findViewById(R.id.iv_background)
                 imageBackground.setImageBitmap(selectedImageBitmap)
+                val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
 
 
             } catch (e: IOException) {
@@ -178,18 +181,24 @@ class PaintActivity : AppCompatActivity() {
         drawingView?.setSizeForBrush(20.toFloat())
         val ib_highlighter : ImageButton = findViewById(R.id.ib_highlighter)
         val ib_brush : ImageButton = findViewById(R.id.ib_brush)
+
         ib_brush.setOnClickListener{
+
             showBrushSizeChooserDialog()
             penFlag = 0
             ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
             ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+
             drawingView?.setColor(colorTag)
         }
 
         ib_highlighter.setOnClickListener{
+
             penFlag = 1
             ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_24))
             ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_press))
+
+
             ColorPickerDialog.Builder(this)
                 .setTitle("ColorPicker Dialog")
                 .setPreferenceName("MyColorPickerDialog")

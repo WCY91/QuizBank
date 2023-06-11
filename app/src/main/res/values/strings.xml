@@ -6,4 +6,9 @@
     <string name="edit_text_hint_location">Location</string>
     <string name="text_add_image">ADD IMAGE</string>
     <string name="btn_text_save">SAVE</string>
+    <string name="image_contentDescription">image</string>
+    <string name="let_s_get_started_text">Let\'s Get started</string>
+    <string name="intro_text_description">Collaborate and Plan Together Across Multiple Devices on Projemanag’s Minimalist Interface.</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="sign_up">SIGN UP</string>
 </resources>

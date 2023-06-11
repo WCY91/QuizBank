@@ -55,6 +55,7 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
 
     }
 
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         canvas.drawBitmap(mCanvasBitmap!!,0f,0f,mCanvasPaint) //代表從原圖的方向0f 0f為整張圖的左上角開始並且大小是整張圖
@@ -77,6 +78,7 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
         Log.e("setColor",newColor)
         color = Color.parseColor(newColor)
         mDrawPaint!!.color = color
+
     }
     fun setHighlighterColor(newColor : String){
         Log.e("setColor",newColor)
@@ -84,10 +86,10 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
         color = Color.argb(50, Color.red(color), Color.green(color), Color.blue(color)) // Set alpha to 50%
         mDrawPaint!!.color = color
     }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         val touchX = event?.x
         val touchY = event?.y
-
         when(event?.action){
             MotionEvent.ACTION_DOWN->{//按下的瞬間 紀錄按下的位置並將初始位置移到那個地方
                 mDrawPath!!.color =color

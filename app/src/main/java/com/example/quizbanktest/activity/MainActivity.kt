@@ -13,14 +13,19 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
+import android.view.View
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.quizbanktest.R
 import com.example.quizbanktest.adapters.RecentViewAdapter
 import com.example.quizbanktest.adapters.RecommendViewAdapter
 import com.example.quizbanktest.adapters.WrongViewAdapter
@@ -51,7 +56,6 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
-    private var binding : ActivityMainBinding?=null
     private val SAMPLE_CROPPED_IMG_NAME = "CroppedImage.jpg"
     private var cameraPhotoUri :Uri ?=null
 
@@ -124,20 +128,26 @@ class MainActivity : AppCompatActivity() {
 
     }
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding?.root)
+        setContentView(R.layout.activity_main)
 
         setupRecentRecyclerView(ConstantsQuestionBank.getQuestions())
         setupRecommendRecyclerView(ConstantsRecommend.getQuestions())
         setupWrongListRecyclerView(ConstantsWrong.getQuestions())
 
-        binding?.bank?.setOnClickListener{
+        var bank : ImageButton = findViewById(R.id.bank)
+        bank.setOnClickListener{
             val intent = Intent(this,PaintActivity::class.java)
             startActivity(intent)
         }
-
-        binding?.camera?.setOnClickListener {
+        //        var imageEditor: ImageButton = findViewById(R.id.imageEditor)
+//        imageEditor.setOnClickListener{
+//            val intent = Intent(this,PaintActivity::class.java)
+//            startActivity(intent)
+//        }
+        var camera : ImageButton = findViewById(R.id.camera)
+        camera?.setOnClickListener {
             val pictureDialog = AlertDialog.Builder(this)
             pictureDialog.setTitle("Select Action")
             val pictureDialogItems =
@@ -290,23 +300,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecentRecyclerView(quizBankList: ArrayList<QuestionBankModel>) {
-
-        binding?.recentQuizBankList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        binding?.recentQuizBankList?.setHasFixedSize(true)
+        var recentQuizBankList : androidx.recyclerview.widget.RecyclerView = findViewById(R.id.recent_quiz_bank_list)
+        recentQuizBankList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        recentQuizBankList?.setHasFixedSize(true)
 
         val placesAdapter = RecentViewAdapter(this, quizBankList)
-        binding?.recentQuizBankList?.adapter = placesAdapter
+        recentQuizBankList?.adapter = placesAdapter
 
 
     }
 
     private fun setupWrongListRecyclerView(wrongList: ArrayList<QuestionModel>) {
-
-        binding?.recentWrongList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        binding?.recentWrongList?.setHasFixedSize(true)
+        var recentWrongList : androidx.recyclerview.widget.RecyclerView = findViewById(R.id.recent_wrong_list)
+        recentWrongList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        recentWrongList?.setHasFixedSize(true)
 
         val placesAdapter = WrongViewAdapter(this, wrongList)
-        binding?.recentWrongList?.adapter = placesAdapter
+        recentWrongList?.adapter = placesAdapter
     }
     private suspend fun saveBitmapFileForPicturesDir(mBitmap: Bitmap?): String {
         Log.e("in sava", "save")
@@ -354,12 +364,12 @@ class MainActivity : AppCompatActivity() {
         return result
     }
     private fun setupRecommendRecyclerView(recommendList: ArrayList<QuestionModel>) {
-
-        binding?.recentRecommendList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
-        binding?.recentRecommendList?.setHasFixedSize(true)
+        var recentRecommendList : androidx.recyclerview.widget.RecyclerView = findViewById(R.id.recent_recommend_list)
+        recentRecommendList?.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        recentRecommendList?.setHasFixedSize(true)
 
         val placesAdapter = RecommendViewAdapter(this, recommendList)
-        binding?.recentRecommendList?.adapter = placesAdapter
+        recentRecommendList?.adapter = placesAdapter
     }
 
     companion object {
@@ -372,6 +382,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        binding = null
     }
 }

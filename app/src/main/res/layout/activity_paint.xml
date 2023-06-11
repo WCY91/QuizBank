@@ -216,6 +216,7 @@
                 android:background="@color/colorRipple"
                 android:scaleType="fitXY"
                 />
+
             <ImageButton
                 android:id="@+id/ib_colorPicker"
                 android:layout_width="40dp"
