@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -27,10 +28,13 @@ class ColorPickerActivity1 : AppCompatActivity() {
         var hexCode :String ?=null
         var colorGet :Int ?=null
         val imagePath = intent.getStringExtra("bitmap_image")
+
         val bitmap = BitmapFactory.decodeFile(imagePath)
+
         val drawable = BitmapDrawable(resources, bitmap)
-        val alphaSlideBar = findViewById<AlphaSlideBar>(R.id.alphaSlideBar)
-        colorPickerView.attachAlphaSlider(alphaSlideBar)
+        //手機不能用 但模擬器可以
+//        val alphaSlideBar = findViewById<AlphaSlideBar>(R.id.alphaSlideBar)
+//        colorPickerView.attachAlphaSlider(alphaSlideBar)
         colorPickerView.setPaletteDrawable(drawable)
         colorPickerView.setColorListener(ColorEnvelopeListener { envelope, fromUser ->
             textView.setText("#" + envelope.getHexCode())

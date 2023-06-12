@@ -271,7 +271,6 @@
             android:src="@drawable/baseline_menu_24"
             android:background="@color/colorRipple"
             android:scaleType="fitXY"
-
             />
     </LinearLayout>
 
