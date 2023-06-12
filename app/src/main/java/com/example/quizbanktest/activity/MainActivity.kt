@@ -13,11 +13,11 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
-import android.view.Menu
+
 import android.view.MenuItem
-import android.view.View
+
 import android.widget.ImageButton
-import android.widget.LinearLayout
+
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,7 +32,7 @@ import com.example.quizbanktest.R
 import com.example.quizbanktest.adapters.RecentViewAdapter
 import com.example.quizbanktest.adapters.RecommendViewAdapter
 import com.example.quizbanktest.adapters.WrongViewAdapter
-import com.example.quizbanktest.databinding.ActivityMainBinding
+
 import com.example.quizbanktest.models.QuestionBankModel
 import com.example.quizbanktest.models.QuestionModel
 import com.example.quizbanktest.network.ImgurService

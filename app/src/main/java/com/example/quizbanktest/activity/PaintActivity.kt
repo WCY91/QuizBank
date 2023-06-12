@@ -32,7 +32,7 @@ import androidx.core.content.FileProvider
 import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import com.example.quizbanktest.R
-import com.example.quizbanktest.databinding.ActivityPaintBinding
+
 import com.example.quizbanktest.draw.DrawingView
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -118,6 +118,8 @@ class PaintActivity : AppCompatActivity() {
             val bitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
             val imageBackground: ImageView = findViewById(R.id.iv_background)
             imageBackground.setImageBitmap(bitmap)
+            val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
+            originBackImageView = getBitmapFromView(flDrawingView)
 
         } else if (result.resultCode == UCrop.RESULT_ERROR) {
             Log.e("cropResult","error")
@@ -139,7 +141,7 @@ class PaintActivity : AppCompatActivity() {
                 val imageBackground: ImageView = findViewById(R.id.iv_background)
                 imageBackground.setImageBitmap(selectedImageBitmap)
                 val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
-
+                originBackImageView = getBitmapFromView(flDrawingView)
 
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -308,6 +310,11 @@ class PaintActivity : AppCompatActivity() {
 
         val ib_colorPicker : ImageButton = findViewById(R.id.ib_colorPicker)
         ib_colorPicker.setOnClickListener{
+            penFlag = 0
+            drawingView?.cancelEraser()
+            ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
+            ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+            ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser))
             val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
             val bitmap: Bitmap = getBitmapFromView(flDrawingView)
 
@@ -328,6 +335,11 @@ class PaintActivity : AppCompatActivity() {
 
         val ibPlatte : ImageButton = findViewById(R.id.ib_Palette)
         ibPlatte.setOnClickListener {
+            penFlag = 0
+            drawingView?.cancelEraser()
+            ib_brush.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_brush_press))
+            ib_highlighter.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.baseline_border_color_24))
+            ib_eraser.setImageDrawable(ContextCompat.getDrawable(this,R.drawable.ib_eraser))
             ColorPickerDialog.Builder(this)
                 .setTitle("ColorPicker Dialog")
                 .setPreferenceName("MyColorPickerDialog")
