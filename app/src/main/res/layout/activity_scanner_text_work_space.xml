@@ -17,6 +17,28 @@
         android:theme="@style/ToolbarTheme"
         app:layout_constraintTop_toTopOf="parent"
         />
+    <LinearLayout
+        android:id="@+id/enter_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_ocr_detail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/white"
+        >
+        <ImageButton
+            android:id="@+id/ib_auto_submit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:src="@drawable/baseline_cloud_upload_24"
+            android:background="@color/white"
+            android:scaleType="fitXY"
+            />
+    </LinearLayout>
     <ScrollView
         android:id="@+id/sv_ocr_main"
         android:layout_width="match_parent"
@@ -24,7 +46,7 @@
         android:fillViewport="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_ocr_detail">
+        app:layout_constraintTop_toBottomOf="@id/enter_buttons">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -58,26 +80,26 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
-    <LinearLayout
-        android:id="@+id/enter_buttons"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/colorRipple"
-        >
-        <ImageButton
-            android:id="@+id/ib_auto_submit"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="15dp"
-            android:src="@drawable/baseline_cloud_upload_24"
-            android:background="@color/colorRipple"
-            android:scaleType="fitXY"
-            />
-    </LinearLayout>
+<!--    <LinearLayout-->
+<!--        android:id="@+id/enter_buttons"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:gravity="right"-->
+<!--        android:orientation="horizontal"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        android:background="@color/colorRipple"-->
+<!--        >-->
+<!--        <ImageButton-->
+<!--            android:id="@+id/ib_auto_submit"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:layout_marginTop="5dp"-->
+<!--            android:layout_marginRight="15dp"-->
+<!--            android:src="@drawable/baseline_cloud_upload_24"-->
+<!--            android:background="@color/colorRipple"-->
+<!--            android:scaleType="fitXY"-->
+<!--            />-->
+<!--    </LinearLayout>-->
 </androidx.constraintlayout.widget.ConstraintLayout>
