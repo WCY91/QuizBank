@@ -1,12 +1,18 @@
 package com.example.quizbanktest.adapters
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.quizbanktest.R
+import com.example.quizbanktest.activity.ScannerTextWorkSpaceActivity
+import com.example.quizbanktest.activity.TagActivity
 
 import com.example.quizbanktest.models.OcrResultModel
 
@@ -41,6 +47,11 @@ class OcrResultViewAdapter(
                 if (onClickListener != null) {
                     onClickListener!!.onClick(position, model)
                 }
+            }
+            var chooseTagButton = holder.itemView.findViewById<LinearLayout>(R.id.chooseTag)
+            chooseTagButton.setOnClickListener{
+                val intent = Intent(context, TagActivity::class.java)
+                context.startActivity(intent)
             }
         }
     }
