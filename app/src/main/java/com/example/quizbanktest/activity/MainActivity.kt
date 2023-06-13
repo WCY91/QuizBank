@@ -407,6 +407,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 val intent = Intent(this,PaintActivity::class.java)
                 startActivity(intent)
             }
+            R.id.ocrWorkSpace ->{
+                val intent = Intent(this,ScannerTextWorkSpaceActivity::class.java)
+                startActivity(intent)
+            }
         }
         var drawer_layout :DrawerLayout = findViewById(R.id.drawer_layout)
         drawer_layout.closeDrawer(GravityCompat.START)

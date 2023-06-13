@@ -299,13 +299,13 @@ class PaintActivity : AppCompatActivity() {
         ib_share.setOnClickListener{
             shareFlag = 1
             Log.e("shareFlagIb",shareFlag.toString())
-                lifecycleScope.launch{
-                    val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
-                    //Save the image to the device
-                    saveBitmapFile(getBitmapFromView(flDrawingView))
-                    shareFlag = 0
-                    Log.e("shareFlagIbFin",shareFlag.toString())
-                }
+            lifecycleScope.launch{
+                val flDrawingView: FrameLayout = findViewById(R.id.fl_drawing_view_container)
+                //Save the image to the device
+                saveBitmapFile(getBitmapFromView(flDrawingView))
+                shareFlag = 0
+                Log.e("shareFlagIbFin",shareFlag.toString())
+            }
         }
 
         val ib_colorPicker : ImageButton = findViewById(R.id.ib_colorPicker)

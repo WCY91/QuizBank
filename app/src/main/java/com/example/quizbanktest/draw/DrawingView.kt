@@ -89,7 +89,7 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
         mDrawPaint!!.strokeJoin=Paint.Join.ROUND//線段的和線段的連接方式類似轉彎處是要甚麼形狀
         mDrawPaint!!.strokeCap = Paint.Cap.ROUND//線段的開始和結尾的那個下筆和離筆是要甚麼形狀
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
-       // mBrushSize = 20.toFloat()
+        // mBrushSize = 20.toFloat()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) { //當設備的螢幕大小換會自動將畫布調整成適合的大小
@@ -177,6 +177,4 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context,attrs) {
     internal inner class CustomPath(var color:Int ,var brushThickness:Float) : Path(){
 
     }
-
-
 }
