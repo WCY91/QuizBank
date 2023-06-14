@@ -80,9 +80,15 @@ class PaintActivity : AppCompatActivity() {
         GPUImageCrosshatchFilter(),
         GPUImageMonochromeFilter(),
         GPUImageGaussianBlurFilter(),
+        GPUImageSobelThresholdFilter(),
         GPUImageHalftoneFilter(),
         GPUImageLaplacianFilter(),
+        GPUImageSubtractBlendFilter(),
+        GPUImageLuminanceFilter(),
+        GPUImageSaturationBlendFilter(),
+        GPUImageAlphaBlendFilter(),
         GPUImageSketchFilter(),
+        GPUImageColorInvertFilter(),
         GPUImageSmoothToonFilter()
     )
     private var originBackImageView : Bitmap ?=null

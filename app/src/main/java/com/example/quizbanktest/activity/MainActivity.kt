@@ -94,9 +94,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             try {
                 val selectedImageBitmap =
                     BitmapFactory.decodeStream(getContentResolver().openInputStream(contentURI!!))
-                    var base64String = encodeImage(selectedImageBitmap!!)
-                    var size = estimateBase64SizeFromBase64String(base64String!!)
-                    Log.e("openGalleryLauncher size",size.toString())
+                getText(selectedImageBitmap!!)
+                var base64String = encodeImage(selectedImageBitmap!!)
+                var size = estimateBase64SizeFromBase64String(base64String!!)
+                Log.e("openGalleryLauncher size",size.toString())
 //                binding?.cameraTest!!.setImageBitmap(selectedImageBitmap) Set the selected image from GALLERY to imageView.
             } catch (e: IOException) {
                 e.printStackTrace()
