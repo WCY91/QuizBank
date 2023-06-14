@@ -41,6 +41,9 @@ import com.example.quizbanktest.utils.ConstantsQuestionBank
 import com.example.quizbanktest.utils.ConstantsRecommend
 import com.example.quizbanktest.utils.ConstantsWrong
 import com.google.android.material.navigation.NavigationView
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -110,21 +113,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             val thumbnail: Bitmap? = BitmapFactory.decodeStream(getContentResolver().openInputStream(cameraPhotoUri!!))
             lifecycleScope.launch{
-                saveBitmapFileForPicturesDir(thumbnail!!)
+                var returnString = saveBitmapFileForPicturesDir(thumbnail!!)
+                Log.e("save pic dir",returnString)
+                getText(thumbnail!!)
             }
             var base64String = encodeImage(thumbnail!!)
+//            uploadImageToImgur(base64String!!)
             var size = estimateBase64SizeFromBase64String(base64String!!)
             Log.e("camera size",size.toString())
-            val sourceUri = cameraPhotoUri!!  // The Uri of the image you want to crop
-            val destinationUri = Uri.fromFile(File(externalCacheDir?.absoluteFile.toString()+File.separator+"QuizBank_"+SAMPLE_CROPPED_IMG_NAME))
-
-            val uCrop = UCrop.of(sourceUri, destinationUri)
-            uCrop.withAspectRatio(1f, 1f)
-            uCrop.withMaxResultSize(800, 800)
-
-            val uCropIntent = uCrop.getIntent(this)
-            uCropActivityResultLauncher.launch(uCropIntent)
-
+//            val sourceUri = cameraPhotoUri!!  // The Uri of the image you want to crop
+//            val destinationUri = Uri.fromFile(File(externalCacheDir?.absoluteFile.toString()+File.separator+"QuizBank_"+SAMPLE_CROPPED_IMG_NAME))
+//
+//            val uCrop = UCrop.of(sourceUri, destinationUri)
+//            uCrop.withAspectRatio(1f, 1f)
+//            uCrop.withMaxResultSize(800, 800)
+//
+//            val uCropIntent = uCrop.getIntent(this)
+//            uCropActivityResultLauncher.launch(uCropIntent)
+//
 //            binding?.cameraTest!!.setImageBitmap(thumbnail)
         }else if(result.resultCode == RESULT_CANCELED){
             Log.e("camera result status result cancel",result.resultCode.toString())
@@ -424,6 +430,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toolbar_main_activity.setNavigationOnClickListener {
             toggleDrawer()
         }
+    }
+    private fun getText(bitmap : Bitmap) {
+        val recognizer = TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
+        val image = InputImage.fromBitmap(bitmap, 0)
+        recognizer.process(image)
+            .addOnSuccessListener { visionText ->
+                Log.e("success", visionText.text)
+            }
+            .addOnFailureListener { e ->
+                Log.e("failure", e.message.toString())
+            }
     }
 
 }

@@ -59,4 +59,8 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     // The Google Material Dependency
     implementation 'com.google.android.material:material:1.1.0'
+    // To recognize Latin script
+    implementation 'com.google.mlkit:text-recognition:16.0.0'
+    // To recognize Chinese script
+    implementation 'com.google.mlkit:text-recognition-chinese:16.0.0'
 }
