@@ -36,6 +36,7 @@ import com.example.quizbanktest.adapters.WrongViewAdapter
 import com.example.quizbanktest.models.QuestionBankModel
 import com.example.quizbanktest.models.QuestionModel
 import com.example.quizbanktest.network.ImgurService
+import com.example.quizbanktest.network.ScanImageService
 import com.example.quizbanktest.utils.Constants
 import com.example.quizbanktest.utils.ConstantsQuestionBank
 import com.example.quizbanktest.utils.ConstantsRecommend
@@ -119,9 +120,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 getText(thumbnail!!)
             }
             var base64String = encodeImage(thumbnail!!)
+
 //            uploadImageToImgur(base64String!!)
             var size = estimateBase64SizeFromBase64String(base64String!!)
             Log.e("camera size",size.toString())
+            scanBase64ToOcrText(base64String)
 //            val sourceUri = cameraPhotoUri!!  // The Uri of the image you want to crop
 //            val destinationUri = Uri.fromFile(File(externalCacheDir?.absoluteFile.toString()+File.separator+"QuizBank_"+SAMPLE_CROPPED_IMG_NAME))
 //
@@ -153,7 +156,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         var bank : ImageButton = findViewById(R.id.bank)
         bank.setOnClickListener{
-            //TODO
+            val intent = Intent(this,BankActivity::class.java)
+            startActivity(intent)
         }
 
         var camera : ImageButton = findViewById(R.id.camera)
@@ -260,9 +264,61 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun encodeImage(bm: Bitmap): String? {
         val baos = ByteArrayOutputStream()
-        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+//        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+        bm.compress(Bitmap.CompressFormat.JPEG, 75, baos)
         val b = baos.toByteArray()
         return Base64.encodeToString(b, Base64.DEFAULT)
+    }
+    private fun scanBase64ToOcrText(base64String:String){
+        if (Constants.isNetworkAvailable(this@MainActivity)) {
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val api = retrofit.create(ScanImageService::class.java)
+            val body = ScanImageService.PostBody(base64String)
+
+            //TODO 拿到csrf token access token
+
+            val csrfToken = "Ijk2MWFiMzI3MmJhOWNmYTcxMTZhMzVjYjI0Mjk4NjdhNjBlZTEwYzki.ZJm1FQ.zPwAvm51IVp5hX9XjzafKttgD5Y"
+            val accessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY4Nzc5NTAxMSwianRpIjoiZWUyOGRiMWQtNmU4ZS00ZDY2LWFiODItMWJmMDM3NjQ3NDRmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6ImMzZWE3YWI2LTI5NjctNDc0OC04M2I4LWRjYWE2YmQzZTYxZCIsIm5iZiI6MTY4Nzc5NTAxMSwiZXhwIjoxNjg3Nzk2ODExfQ.ySy-6H_WlSLDtxJ4HGNb6vFsnLARIAbCyPVKlWublcA"
+            val call = api.scanBase64(csrfToken, accessToken,body)
+
+            call.enqueue(object : Callback<String> {
+                override fun onResponse(response: Response<String>?, retrofit: Retrofit?) {
+                    if (response!!.isSuccess) {
+                        val ocrText: String = response.body()
+                        Log.i("Response Result", "$ocrText")
+                    } else {
+
+                        val sc = response.code()
+                        when (sc) {
+                            400 -> {
+                                Log.e("Error 400", "Bad Re" +
+                                        "" +
+                                        "quest")
+
+                            }
+                            404 -> {
+                                Log.e("Error 404", "Not Found")
+                            }
+                            else -> {
+                                Log.e("Error", "Generic Error")
+                            }
+                        }
+                    }
+                }
+                override fun onFailure(t: Throwable?) {
+                    Log.e("Errorrrrr", t?.message.toString())
+                }
+            })
+        } else {
+            Toast.makeText(
+                this@MainActivity,
+                "No internet connection available.",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     private fun uploadImageToImgur(base64String:String){
