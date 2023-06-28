@@ -10,8 +10,10 @@ interface ScanImageService {
 
     @POST("/scanner")
     fun scanBase64(
+        @Header("Cookie") cookie:String,
         @Header("X-CSRF-Token") csrfToken: String,
-        @Header("access_token") accessToken: String,
+        @Header("accessToken") accessToken: String,
+        @Header("refreshToken") refreshToken: String,
         @Body body: PostBody
     ): Call<String>
 }
