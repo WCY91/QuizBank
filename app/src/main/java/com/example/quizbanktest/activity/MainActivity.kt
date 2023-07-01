@@ -13,11 +13,8 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Base64
 import android.util.Log
-
 import android.view.MenuItem
-
 import android.widget.ImageButton
-
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,7 +29,6 @@ import com.example.quizbanktest.R
 import com.example.quizbanktest.adapters.RecentViewAdapter
 import com.example.quizbanktest.adapters.RecommendViewAdapter
 import com.example.quizbanktest.adapters.WrongViewAdapter
-
 import com.example.quizbanktest.models.QuestionBankModel
 import com.example.quizbanktest.models.QuestionModel
 import com.example.quizbanktest.network.AccountService
@@ -44,6 +40,7 @@ import com.example.quizbanktest.utils.ConstantsQuestionBank
 import com.example.quizbanktest.utils.ConstantsRecommend
 import com.example.quizbanktest.utils.ConstantsWrong
 import com.google.android.material.navigation.NavigationView
+import com.google.gson.Gson
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
@@ -272,14 +269,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun login(){
-        Log.e("login fun","success")
+        getCsrfToken()
         if (Constants.isNetworkAvailable(this@MainActivity)) {
             val retrofit: Retrofit = Retrofit.Builder()
                 .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
             val api = retrofit.create(AccountService::class.java)
-            val body = AccountService.PostBody("test","test")
+            val body = AccountService.PostBody(Constants.username,Constants.password)
 
             //TODO 用csrf token 拿access token
 
@@ -315,7 +312,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 Log.e("in login Error 400", "Bad Re" +
                                         "" +
                                         "quest"+response.body())
-
                             }
                             404 -> {
                                 Log.e("in login Error 404", "Not Found")
@@ -381,7 +377,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 Log.e("in csrf Error 400", "Bad Re" +
                                         "" +
                                         "quest")
-
                             }
                             404 -> {
                                 Log.e("in csrf Error 404", "Not Found")
@@ -418,11 +413,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             Log.e("COOKIE in scan ", Constants.COOKIE)
             val call = api.scanBase64(Constants.COOKIE,Constants.csrfToken, Constants.accessToken,Constants.refreshToken,body)
 
-            call.enqueue(object : Callback<String> {
-                override fun onResponse(response: Response<String>?, retrofit: Retrofit?) {
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(response: Response<ResponseBody>?, retrofit: Retrofit?) {
                     if (response!!.isSuccess) {
-                        val ocrText: String = response.body()
-                        Log.i("Response Result", "$ocrText")
+                        val gson = Gson()
+                        val ocrResponse = gson.fromJson(response.body().charStream(), OCRResponse::class.java)
+                        Log.e("Response Result", ocrResponse.ocrText)
                     } else {
 
                         val sc = response.code()
@@ -431,7 +427,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                 Log.e("Error 400", "Bad Re" +
                                         "" +
                                         "quest")
-
                             }
                             404 -> {
                                 Log.e("Error 404", "Not Found")
@@ -443,7 +438,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     }
                 }
                 override fun onFailure(t: Throwable?) {
-                    Log.e("Errorrrrr", t?.message.toString())
+                    Log.e("in scan Errorrrrr", t?.message.toString())
                 }
             })
         } else {
@@ -572,14 +567,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         recentRecommendList?.adapter = placesAdapter
     }
 
-    companion object {
-        private const val GALLERY = 1
-        private const val CAMERA = 2
-
-        private const val IMAGE_DIRECTORY = "QuizTest"
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
     }
@@ -634,4 +621,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
     }
 
+    companion object {
+        private const val GALLERY = 1
+        private const val CAMERA = 2
+
+        private const val IMAGE_DIRECTORY = "QuizTest"
+
+    }
+    data class OCRResponse(val ocrText: String)
 }
